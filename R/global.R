@@ -1,0 +1,1 @@
+utils::globalVariables(c("boxcoxar_amh", "boxcoxar", "single_monitor"))

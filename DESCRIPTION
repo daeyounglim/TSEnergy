@@ -1,0 +1,17 @@
+Package: TSEnergy
+Type: Package
+Title: Bayesian Time Series Models for Energy Usage Monitoring
+Version: 1.0
+Date: 2020-05-10
+Author: Daeyoung Lim [aut]
+Maintainer: Daeyoung Lim
+    <daeyoung.lim@uconn.edu>
+Description: This package contains algorithms for Bayesian time-series models to perform inferences on energy usage data.
+License: GPL (>= 3)
+Encoding: UTF-8
+LazyLoad: yes
+RoxygenNote: 6.1.1
+NeedsCompilation: yes
+Imports: Rcpp (>= 0.12.14)
+Depends: R (>= 3.4), coda (>= 0.11-3)
+LinkingTo: Rcpp, RcppArmadillo, RcppProgress, BH
