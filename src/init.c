@@ -10,12 +10,12 @@
 /* .Call calls */
 extern SEXP boxcoxar_amh(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP calc_modelfit(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP single_monitor(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP singleMonitor(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 
 // static const R_CallMethodDef CallEntries[] = {
-//     {"boxcoxar_amh",   (DL_FUNC) &boxcoxar_amh,   16},
-//     {"calc_modelfit",  (DL_FUNC) &calc_modelfit,  12},
-//     {"single_monitor", (DL_FUNC) &single_monitor, 10},
+//     {"boxcoxar_amh",  (DL_FUNC) &boxcoxar_amh,  16},
+//     {"calc_modelfit", (DL_FUNC) &calc_modelfit, 12},
+//     {"singleMonitor", (DL_FUNC) &singleMonitor, 10},
 //     {NULL, NULL, 0}
 // };
 

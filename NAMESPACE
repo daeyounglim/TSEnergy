@@ -2,6 +2,8 @@ useDynLib(TSEnergy, .registration=TRUE)
 importFrom(Rcpp, evalCpp)
 exportPattern("^[[:alpha:]]+")
 
+import(coda)
 
 S3method(gof, boxcoxar)
 S3method(hpd, boxcoxar)
+

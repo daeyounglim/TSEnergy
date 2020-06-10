@@ -1,1 +1,1 @@
-utils::globalVariables(c("boxcoxar_amh", "boxcoxar", "single_monitor"))
+utils::globalVariables(c("boxcoxar_amh", "boxcoxar", "singleMonitor", "calc_modelfit"))

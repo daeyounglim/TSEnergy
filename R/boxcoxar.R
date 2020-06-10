@@ -34,7 +34,7 @@
 #' 
 #' fit <- boxcoxar(y, integer(length(y)), mcmc=list(ndiscard=10000, nkeep = 20000),
 #'          xobs = xobs, zobs = zobs, uobs = uobs, verbose=TRUE)
-#' 
+#' }
 #' @export
 boxcoxar <- function(yobs, miss, a, xobs, zobs, uobs, mcmc=list(), prior=list(), verbose = FALSE) {
   if (missing(a)) a <- min(yobs, na.rm=TRUE) - 1

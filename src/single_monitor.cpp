@@ -11,16 +11,16 @@
 #include "ListBuilder.h"
 // [[Rcpp::depends(RcppArmadillo,RcppProgress))]]
 
-int single_monitor(const arma::vec& y_surveill,
-						 const arma::vec& yh_bar, // monthly average of historical data
-						 const double& sigma,
-						 const double& nyears, // number of historical years (= "T" in the paper)
-						 const double& sig_level, // significance level
-						 const double& c, // alternative H_1 : Y_k ~ N(c * beta, sig2)
-						 const int& B1,
-						 const int& B2,
-						 const int& B3,
-						 const bool verbose) {
+int singleMonitor(const arma::vec& y_surveill,
+				  const arma::vec& yh_bar, // monthly average of historical data
+				  const double& sigma,
+				  const double& nyears, // number of historical years (= "T" in the paper)
+				  const double& sig_level, // significance level
+				  const double& c, // alternative H_1 : Y_k ~ N(c * beta, sig2)
+				  const int& B1,
+				  const int& B2,
+				  const int& B3,
+				  const bool verbose) {
 	using namespace arma;
 	using namespace Rcpp;
 	using namespace R;
