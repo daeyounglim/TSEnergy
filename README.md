@@ -72,20 +72,15 @@ eta.est <- rowMeans(fit$mcmc.draws$eta)
 
 ## 🔣 Inputs explained for `boxcoxar` <a name="inputs"></a>
 
-* `y` - aggregate mean of the responses for each arm of each study
-* `sd` - standard deviation of the responses for each arm of each study
-* `x` - aggregate covariates for the mean component
-* `ids` - study number in integers
-* `iarm` - arm number of each study
-* `groupinfo` - list of grouping information; the control(baseline) group must start from 0; the aggregate covariates `z` explaining the variance of the random effect of the t-th treatment will be construct based on this grouping information
-* `npt` - number of observations per trial
-* `nT` - number of treatments
+* `yobs` - a vector of measured energy usage to be used as the response variable
+* `miss` - a vector of binary values (0 or 1), each element of which indicates whether the response variable is missing
+* `a` - the shift parameter for the Box-Cox. By default, set to the minimum value minus one.
+* `xobs` - the covariate matrix for the main regression equation
+* `zobs` - the covariate matrix for the Box-Cox transformation parameter lambda
+* `uobs` - the covariate matrix for the time-dependent variances sigma2
+* `mcmc` - list of MCMC-related parameters: number of burn-ins (ndiscard), number of thinning(nskip), and posterior sample size (nkeep)
 * `prior` - list of hyperparameters; when not given, algorithm will run in default setting
-* `mcmc` - list of MCMC-related parameters: number of burn-ins (ndiscard), number of thinning (nskip), and posterior sample size (nkeep)
-* `add.z` - additional covariates other than the grouping vectors that should be column-concatenated to `z`. This should have the same number of rows as `y`, and `x`
-* `scale.x` - logical variable for scaling x. Defaulting to `TRUE`. If not scaled, the `gamma[1]` cannot be interpreted as placebo
-* `verbose` - logical variable for printing progress bar. Default to `FALSE`.
-* `init` - initial values for beta (`ns + nT` dimensional) and phi. Dimensions must be conformant.
+* `verbose` - logical variable for printing progress bar. Default to FALSE.
 
 ## 👨🏻‍💻 `R` Package Development Reminders <a name="dev_reminders"></a>
 
