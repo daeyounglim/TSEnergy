@@ -5,7 +5,7 @@
 #include <Rdefines.h>
 #include <algorithm>
 #include <iterator>
-#include "misc_boxcoxar.hpp"
+#include "misc_boxcoxar.h"
 // [[Rcpp::depends(RcppArmadillo))]]
 double loglik_beta(const arma::vec& beta,
 			       const arma::vec& wobs,
