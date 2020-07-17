@@ -6,3 +6,87 @@
 
 using namespace Rcpp;
 
+// boxcoxar_amh
+Rcpp::List boxcoxar_amh(const arma::vec& yobs, const arma::uvec& miss, const double& a, const arma::mat& xobs, const arma::mat& zobs, const arma::mat& uobs, const arma::vec& mu_beta0, const arma::mat& Sig_beta0, const arma::vec& mu_alpha0, const arma::mat& Sig_alpha0, const arma::vec& mu_eta0, const arma::mat& Sig_eta0, const int& ndiscard, const int& nskip, const int& nkeep, const bool boxcox_flag, const bool verbose);
+RcppExport SEXP _TSEnergy_boxcoxar_amh(SEXP yobsSEXP, SEXP missSEXP, SEXP aSEXP, SEXP xobsSEXP, SEXP zobsSEXP, SEXP uobsSEXP, SEXP mu_beta0SEXP, SEXP Sig_beta0SEXP, SEXP mu_alpha0SEXP, SEXP Sig_alpha0SEXP, SEXP mu_eta0SEXP, SEXP Sig_eta0SEXP, SEXP ndiscardSEXP, SEXP nskipSEXP, SEXP nkeepSEXP, SEXP boxcox_flagSEXP, SEXP verboseSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::vec& >::type yobs(yobsSEXP);
+    Rcpp::traits::input_parameter< const arma::uvec& >::type miss(missSEXP);
+    Rcpp::traits::input_parameter< const double& >::type a(aSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type xobs(xobsSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type zobs(zobsSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type uobs(uobsSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type mu_beta0(mu_beta0SEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type Sig_beta0(Sig_beta0SEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type mu_alpha0(mu_alpha0SEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type Sig_alpha0(Sig_alpha0SEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type mu_eta0(mu_eta0SEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type Sig_eta0(Sig_eta0SEXP);
+    Rcpp::traits::input_parameter< const int& >::type ndiscard(ndiscardSEXP);
+    Rcpp::traits::input_parameter< const int& >::type nskip(nskipSEXP);
+    Rcpp::traits::input_parameter< const int& >::type nkeep(nkeepSEXP);
+    Rcpp::traits::input_parameter< const bool >::type boxcox_flag(boxcox_flagSEXP);
+    Rcpp::traits::input_parameter< const bool >::type verbose(verboseSEXP);
+    rcpp_result_gen = Rcpp::wrap(boxcoxar_amh(yobs, miss, a, xobs, zobs, uobs, mu_beta0, Sig_beta0, mu_alpha0, Sig_alpha0, mu_eta0, Sig_eta0, ndiscard, nskip, nkeep, boxcox_flag, verbose));
+    return rcpp_result_gen;
+END_RCPP
+}
+// calc_modelfit_residuals
+Rcpp::List calc_modelfit_residuals(const arma::vec& yobs, const arma::mat& xobs, const arma::mat& zobs, const arma::mat& uobs, const arma::mat& beta, const arma::mat& alpha, const arma::mat& eta, const arma::mat& sig2, const arma::mat& rho, const arma::mat& lam, const int& nkeep, const bool verbose);
+RcppExport SEXP _TSEnergy_calc_modelfit_residuals(SEXP yobsSEXP, SEXP xobsSEXP, SEXP zobsSEXP, SEXP uobsSEXP, SEXP betaSEXP, SEXP alphaSEXP, SEXP etaSEXP, SEXP sig2SEXP, SEXP rhoSEXP, SEXP lamSEXP, SEXP nkeepSEXP, SEXP verboseSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::vec& >::type yobs(yobsSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type xobs(xobsSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type zobs(zobsSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type uobs(uobsSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type eta(etaSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type sig2(sig2SEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type rho(rhoSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type lam(lamSEXP);
+    Rcpp::traits::input_parameter< const int& >::type nkeep(nkeepSEXP);
+    Rcpp::traits::input_parameter< const bool >::type verbose(verboseSEXP);
+    rcpp_result_gen = Rcpp::wrap(calc_modelfit_residuals(yobs, xobs, zobs, uobs, beta, alpha, eta, sig2, rho, lam, nkeep, verbose));
+    return rcpp_result_gen;
+END_RCPP
+}
+// singleMonitor
+int singleMonitor(const arma::vec& y_surveill, const arma::vec& yh_bar, const double& sigma, const double& nyears, const double& sig_level, const double& c, const int& B1, const int& B2, const int& B3, const bool verbose);
+RcppExport SEXP _TSEnergy_singleMonitor(SEXP y_surveillSEXP, SEXP yh_barSEXP, SEXP sigmaSEXP, SEXP nyearsSEXP, SEXP sig_levelSEXP, SEXP cSEXP, SEXP B1SEXP, SEXP B2SEXP, SEXP B3SEXP, SEXP verboseSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::vec& >::type y_surveill(y_surveillSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type yh_bar(yh_barSEXP);
+    Rcpp::traits::input_parameter< const double& >::type sigma(sigmaSEXP);
+    Rcpp::traits::input_parameter< const double& >::type nyears(nyearsSEXP);
+    Rcpp::traits::input_parameter< const double& >::type sig_level(sig_levelSEXP);
+    Rcpp::traits::input_parameter< const double& >::type c(cSEXP);
+    Rcpp::traits::input_parameter< const int& >::type B1(B1SEXP);
+    Rcpp::traits::input_parameter< const int& >::type B2(B2SEXP);
+    Rcpp::traits::input_parameter< const int& >::type B3(B3SEXP);
+    Rcpp::traits::input_parameter< const bool >::type verbose(verboseSEXP);
+    rcpp_result_gen = Rcpp::wrap(singleMonitor(y_surveill, yh_bar, sigma, nyears, sig_level, c, B1, B2, B3, verbose));
+    return rcpp_result_gen;
+END_RCPP
+}
+
+RcppExport SEXP _TSEnergy_boxcoxvar_amh(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
+
+static const R_CallMethodDef CallEntries[] = {
+    {"_TSEnergy_boxcoxar_amh", (DL_FUNC) &_TSEnergy_boxcoxar_amh, 17},
+    {"_TSEnergy_calc_modelfit_residuals", (DL_FUNC) &_TSEnergy_calc_modelfit_residuals, 12},
+    {"_TSEnergy_singleMonitor", (DL_FUNC) &_TSEnergy_singleMonitor, 10},
+    {"_TSEnergy_boxcoxvar_amh",           (DL_FUNC) &_TSEnergy_boxcoxvar_amh,           10},
+    {NULL, NULL, 0}
+};
+
+RcppExport void R_init_TSEnergy(DllInfo *dll) {
+    R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
+    R_useDynamicSymbols(dll, FALSE);
+}

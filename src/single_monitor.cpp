@@ -11,6 +11,7 @@
 #include "ListBuilder.h"
 // [[Rcpp::depends(RcppArmadillo,RcppProgress))]]
 
+// [[Rcpp::export]]
 int singleMonitor(const arma::vec& y_surveill,
 				  const arma::vec& yh_bar, // monthly average of historical data
 				  const double& sigma,

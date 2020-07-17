@@ -12,6 +12,7 @@
 #include "nelmin.h"
 // [[Rcpp::depends(RcppArmadillo,RcppProgress))]]
 
+// [[Rcpp::export]]
 Rcpp::List boxcoxar_amh(const arma::vec& yobs,
 					const arma::uvec& miss,
 					const double& a,
@@ -27,6 +28,7 @@ Rcpp::List boxcoxar_amh(const arma::vec& yobs,
 				    const int& ndiscard,
 				    const int& nskip,
 				    const int& nkeep,
+				    const bool boxcox_flag,
 				    const bool verbose) {
 	using namespace arma;
 	using namespace Rcpp;
@@ -48,12 +50,16 @@ Rcpp::List boxcoxar_amh(const arma::vec& yobs,
 	double rho = 0.5;
 	vec sig2 = arma::exp(uobs * eta);
 	vec wobs(T, fill::zeros);
-	for (int t = 0; t < T; ++t) {
-		if (lam(t) == 0.0) {
-			wobs(t) = std::log(ystar(t) - a);
-		} else {
-			wobs(t) = (std::pow(ystar(t) - a, lam(t)) - 1.0) / lam(t);
+	if (boxcox_flag) {
+		for (int t = 0; t < T; ++t) {
+			if (lam(t) == 0.0) {
+				wobs(t) = std::log(ystar(t) - a);
+			} else {
+				wobs(t) = (std::pow(ystar(t) - a, lam(t)) - 1.0) / lam(t);
+			}
 		}
+	} else {
+		wobs = ystar;
 	}
 	bool miss_flag = any(miss);
 	uvec miss_idx = find(miss);
@@ -62,10 +68,14 @@ Rcpp::List boxcoxar_amh(const arma::vec& yobs,
 			int idx = miss_idx(t);
 			double normrv = ::norm_rand();
 			ystar(idx) = normrv;
-			if (lam(idx) == 0.0) {
-				wobs(idx) = std::log(ystar(idx) - a);
+			if (boxcox_flag) {
+				if (lam(idx) == 0.0) {
+					wobs(idx) = std::log(ystar(idx) - a);
+				} else {
+					wobs(idx) = (std::pow(ystar(idx) - a, lam(idx)) - 1.0) / lam(idx);
+				}
 			} else {
-				wobs(idx) = (std::pow(ystar(idx) - a, lam(idx)) - 1.0) / lam(idx);
+				wobs(idx) = ystar(idx);
 			}
 		}
 	}
@@ -138,24 +148,26 @@ Rcpp::List boxcoxar_amh(const arma::vec& yobs,
 			/***********
 			Sample alpha
 			***********/
-			for (int j = 0; j < zcols; ++j) {
-				vec alpha_prop = alpha;
-				alpha_prop(j) = ::norm_rand() * std::exp(alpha_tunings(j)) + alpha(j);
+			if (boxcox_flag) {
+				for (int j = 0; j < zcols; ++j) {
+					vec alpha_prop = alpha;
+					alpha_prop(j) = ::norm_rand() * std::exp(alpha_tunings(j)) + alpha(j);
 
-				// log-likelihood difference
-				double ll_diff = loglik_alpha(alpha_prop, ystar, zobs, sig2, xb, rho, a, Siginv_alpha0, Siginv_mu_alpha) -
-						  loglik_alpha(alpha, ystar, zobs, sig2, xb, rho, a, Siginv_alpha0, Siginv_mu_alpha);
-				if (std::log(::unif_rand()) < ll_diff) {
-					alpha(j) = alpha_prop(j);
-					++alpha_accepts(j);
+					// log-likelihood difference
+					double ll_diff = loglik_alpha(alpha_prop, ystar, zobs, sig2, xb, rho, a, Siginv_alpha0, Siginv_mu_alpha) -
+							  loglik_alpha(alpha, ystar, zobs, sig2, xb, rho, a, Siginv_alpha0, Siginv_mu_alpha);
+					if (std::log(::unif_rand()) < ll_diff) {
+						alpha(j) = alpha_prop(j);
+						++alpha_accepts(j);
+					}
 				}
-			}
-			lam = zobs * alpha;
-			for (int t = 0; t < T; ++t) {
-				if (lam(t) == 0.0) {
-					wobs(t) = std::log(ystar(t) - a);
-				} else {
-					wobs(t) = (std::pow(ystar(t) - a, lam(t)) - 1.0) / lam(t);
+				lam = zobs * alpha;
+				for (int t = 0; t < T; ++t) {
+					if (lam(t) == 0.0) {
+						wobs(t) = std::log(ystar(t) - a);
+					} else {
+						wobs(t) = (std::pow(ystar(t) - a, lam(t)) - 1.0) / lam(t);
+					}
 				}
 			}
 
@@ -210,13 +222,15 @@ Rcpp::List boxcoxar_amh(const arma::vec& yobs,
 					}
 				}
 
-				alpha_accepts /= static_cast<double>(batch_length);
-				alpha_rates.col(batch_num) = alpha_accepts;
-				for (int i=0; i<zcols; ++i) {
-					if (alpha_accepts(i) > obj_rate) {
-						alpha_tunings(i) += std::min(0.01, 1.0 / std::sqrt(static_cast<double>(batch_num+1)));
-					} else {
-						alpha_tunings(i) -= std::min(0.01, 1.0 / std::sqrt(static_cast<double>(batch_num+1)));
+				if (boxcox_flag) {
+					alpha_accepts /= static_cast<double>(batch_length);
+					alpha_rates.col(batch_num) = alpha_accepts;
+					for (int i=0; i<zcols; ++i) {
+						if (alpha_accepts(i) > obj_rate) {
+							alpha_tunings(i) += std::min(0.01, 1.0 / std::sqrt(static_cast<double>(batch_num+1)));
+						} else {
+							alpha_tunings(i) -= std::min(0.01, 1.0 / std::sqrt(static_cast<double>(batch_num+1)));
+						}
 					}
 				}
 
@@ -232,7 +246,9 @@ Rcpp::List boxcoxar_amh(const arma::vec& yobs,
 				++batch_num;
 				rho_accepts = 0.0;
 				beta_accepts.fill(0.0);
-				alpha_accepts.fill(0.0);
+				if (boxcox_flag) {
+					alpha_accepts.fill(0.0);
+				}
 				eta_accepts.fill(0.0);
 			}
 			prog.increment();
@@ -275,27 +291,29 @@ Rcpp::List boxcoxar_amh(const arma::vec& yobs,
 				}
 				xb = xobs * beta;
 
-				/***********
-				Sample alpha
-				***********/
-				for (int j = 0; j < zcols; ++j) {
-					vec alpha_prop = alpha;
-					alpha_prop(j) = ::norm_rand() * std::exp(alpha_tunings(j)) + alpha(j);
+				if (boxcox_flag) {
+					/***********
+					Sample alpha
+					***********/
+					for (int j = 0; j < zcols; ++j) {
+						vec alpha_prop = alpha;
+						alpha_prop(j) = ::norm_rand() * std::exp(alpha_tunings(j)) + alpha(j);
 
-					// log-likelihood difference
-					double ll_diff = loglik_alpha(alpha_prop, ystar, zobs, sig2, xb, rho, a, Siginv_alpha0, Siginv_mu_alpha) -
-							  loglik_alpha(alpha, ystar, zobs, sig2, xb, rho, a, Siginv_alpha0, Siginv_mu_alpha);
-					if (std::log(::unif_rand()) < ll_diff) {
-						alpha(j) = alpha_prop(j);
-						++alpha_accepts(j);
+						// log-likelihood difference
+						double ll_diff = loglik_alpha(alpha_prop, ystar, zobs, sig2, xb, rho, a, Siginv_alpha0, Siginv_mu_alpha) -
+								  loglik_alpha(alpha, ystar, zobs, sig2, xb, rho, a, Siginv_alpha0, Siginv_mu_alpha);
+						if (std::log(::unif_rand()) < ll_diff) {
+							alpha(j) = alpha_prop(j);
+							++alpha_accepts(j);
+						}
 					}
-				}
-				lam = zobs * alpha;
-				for (int t = 0; t < T; ++t) {
-					if (lam(t) == 0.0) {
-						wobs(t) = std::log(ystar(t) - a);
-					} else {
-						wobs(t) = (std::pow(ystar(t) - a, lam(t)) - 1.0) / lam(t);
+					lam = zobs * alpha;
+					for (int t = 0; t < T; ++t) {
+						if (lam(t) == 0.0) {
+							wobs(t) = std::log(ystar(t) - a);
+						} else {
+							wobs(t) = (std::pow(ystar(t) - a, lam(t)) - 1.0) / lam(t);
+						}
 					}
 				}
 
@@ -349,13 +367,15 @@ Rcpp::List boxcoxar_amh(const arma::vec& yobs,
 						}
 					}
 
-					alpha_accepts /= static_cast<double>(batch_length);
-					alpha_rates.col(batch_num) = alpha_accepts;
-					for (int i=0; i<zcols; ++i) {
-						if (alpha_accepts(i) > obj_rate) {
-							alpha_tunings(i) += std::min(0.01, 1.0 / std::sqrt(static_cast<double>(batch_num+1)));
-						} else {
-							alpha_tunings(i) -= std::min(0.01, 1.0 / std::sqrt(static_cast<double>(batch_num+1)));
+					if (boxcox_flag) {
+						alpha_accepts /= static_cast<double>(batch_length);
+						alpha_rates.col(batch_num) = alpha_accepts;
+						for (int i=0; i<zcols; ++i) {
+							if (alpha_accepts(i) > obj_rate) {
+								alpha_tunings(i) += std::min(0.01, 1.0 / std::sqrt(static_cast<double>(batch_num+1)));
+							} else {
+								alpha_tunings(i) -= std::min(0.01, 1.0 / std::sqrt(static_cast<double>(batch_num+1)));
+							}
 						}
 					}
 
@@ -370,13 +390,17 @@ Rcpp::List boxcoxar_amh(const arma::vec& yobs,
 					}
 					++batch_num;
 					rho_accepts = 0.0;
-					alpha_accepts.fill(0.0);
+					if (boxcox_flag) {
+						alpha_accepts.fill(0.0);
+					}
 					beta_accepts.fill(0.0);
 					eta_accepts.fill(0.0);
 				}
 			}
 			beta_save.col(ikeep) = beta;
-			alpha_save.col(ikeep) = alpha;
+			if (boxcox_flag) {
+				alpha_save.col(ikeep) = alpha;
+			}
 			eta_save.col(ikeep) = eta;
 			lam_save.col(ikeep) = lam;
 			sig2_save.col(ikeep) = sig2;
@@ -384,19 +408,28 @@ Rcpp::List boxcoxar_amh(const arma::vec& yobs,
 			prog.increment();
 		}
 	}
-	// alpha_rates /= static_cast<double>(ndiscard+nkeep*nskip);
-	// eta_rates /= static_cast<double>(ndiscard+nkeep*nskip);
-	// rho_rates /= static_cast<double>(ndiscard+nkeep*nskip);
 	
-	return ListBuilder()
-	.add("beta", beta_save)
-	.add("alpha", alpha_save)
-	.add("eta", eta_save)
-	.add("sig2", sig2_save)
-	.add("rho", rho_save)
-	.add("lam", lam_save)
-	.add("beta_acceptance", beta_rates)
-	.add("alpha_acceptance", alpha_rates)
-	.add("eta_acceptance", eta_rates)
-	.add("rho_acceptance", rho_rates);
+	if (boxcox_flag) {
+		return ListBuilder()
+		.add("beta", beta_save)
+		.add("alpha", alpha_save)
+		.add("eta", eta_save)
+		.add("sig2", sig2_save)
+		.add("rho", rho_save)
+		.add("lam", lam_save)
+		.add("beta_acceptance", beta_rates)
+		.add("alpha_acceptance", alpha_rates)
+		.add("eta_acceptance", eta_rates)
+		.add("rho_acceptance", rho_rates);
+	} else {
+		return ListBuilder()
+		.add("beta", beta_save)
+		.add("eta", eta_save)
+		.add("sig2", sig2_save)
+		.add("rho", rho_save)
+		.add("beta_acceptance", beta_rates)
+		.add("alpha_acceptance", alpha_rates)
+		.add("eta_acceptance", eta_rates)
+		.add("rho_acceptance", rho_rates);
+	}
 }

@@ -11,6 +11,7 @@
 #' @param uobs the covariate matrix for the time-dependent variances sigma2
 #' @param mcmc list of MCMC-related parameters: number of burn-ins (ndiscard), number of thinning(nskip), and posterior sample size (nkeep)
 #' @param prior list of hyperparameters; when not given, algorithm will run in default setting
+#' @param boxcox_flag logical variable for printing progress bar. Default to FALSE.
 #' @param verbose logical variable for printing progress bar. Default to FALSE.
 #' @return a dataframe with input arguments, posterior samples, Metropolis algorithm acceptance rates, etc
 #' @examples
@@ -36,7 +37,7 @@
 #'          xobs = xobs, zobs = zobs, uobs = uobs, verbose=TRUE)
 #' }
 #' @export
-boxcoxar <- function(yobs, miss, a, xobs, zobs, uobs, mcmc=list(), prior=list(), verbose = FALSE) {
+boxcoxar <- function(yobs, miss, a, xobs, zobs, uobs, mcmc=list(), prior=list(), boxcox_flag=TRUE, verbose = FALSE) {
   if (missing(a)) a <- min(yobs, na.rm=TRUE) - 1
 
   xcols <- ncol(xobs)
@@ -62,8 +63,7 @@ boxcoxar <- function(yobs, miss, a, xobs, zobs, uobs, mcmc=list(), prior=list(),
 
 
   mcmctime <- system.time({
-    fout <- .Call(`boxcoxar_amh`,
-                  PACKAGE="TSEnergy",
+    fout <- .Call('_TSEnergy_boxcoxar_amh',
                   as.double(yobs),
                   as.integer(miss),
                   as.double(a),
@@ -79,6 +79,7 @@ boxcoxar <- function(yobs, miss, a, xobs, zobs, uobs, mcmc=list(), prior=list(),
                   as.integer(ndiscard),
                   as.integer(nskip),
                   as.integer(nkeep),
+                  as.logical(boxcox_flag),
                   as.logical(verbose))
   })
   out <- list(yobs = yobs,
@@ -88,6 +89,7 @@ boxcoxar <- function(yobs, miss, a, xobs, zobs, uobs, mcmc=list(), prior=list(),
               zobs = zobs,
               uobs = uobs,
               prior = privals,
+              boxcox_flag = boxcox_flag,
               mcmctime = mcmctime,
               mcmc = mcvals,
               mcmc.draws = fout)

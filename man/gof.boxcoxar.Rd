@@ -7,9 +7,9 @@
 \method{gof}{boxcoxar}(object, type = "pearson", verbose = FALSE)
 }
 \arguments{
-\item{object}{the output model from fitting a model}
+\item{object}{the output model from fitting a meta analysis/regression model}
 
-\item{type}{the type of goodness of fit to compute; DIC / LPML / Pearson's residual}
+\item{type}{the type of goodness of fit to compute; DIC or LPML or Pearson's residual}
 
 \item{verbose}{FALSE by default; If TRUE, then progress bar will appear}
 }

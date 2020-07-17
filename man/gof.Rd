@@ -2,14 +2,14 @@
 % Please edit documentation in R/gof.R
 \name{gof}
 \alias{gof}
-\title{get goodness of fit: DIC / LPML / Pearson's residual}
+\title{get goodness of fit: DIC or LPML}
 \usage{
 gof(object, type = "pearson", verbose = FALSE)
 }
 \arguments{
-\item{object}{the output model from fitting a model}
+\item{object}{the output model from fitting a meta analysis/regression model}
 
-\item{type}{the type of goodness of fit to compute; DIC / LPML / Pearson's residual}
+\item{type}{the type of goodness of fit to compute; DIC or LPML}
 
 \item{verbose}{FALSE by default; If TRUE, then progress bar will appear}
 }
@@ -17,5 +17,5 @@ gof(object, type = "pearson", verbose = FALSE)
 dataframe containing the goodness of fit measure
 }
 \description{
-get goodness of fit: DIC / LPML / Pearson's residual
+get goodness of fit: DIC or LPML
 }

@@ -10,19 +10,18 @@
 #include "ListBuilder.h"
 #include "random.h"
 #include "misc_mvboxcoxar.h"
-#include "nelmin.h"
 // [[Rcpp::depends(RcppArmadillo,RcppProgress))]]
 
-Rcpp::List mvboxcoxar_amh(const arma::mat &yobs,
-                          const arma::umat &miss,
-                          const double &a,
-                          const arma::mat &xobs,
-                          const double &sigb2,
-                          const double &sigc2,
-                          const int &ndiscard,
-                          const int &nskip,
-                          const int &nkeep,
-                          const bool verbose)
+Rcpp::List boxcoxvar(const arma::mat &yobs,
+                     const arma::umat &miss,
+                     const double &a,
+                     const arma::mat &xobs,
+                     const double &sigb2,
+                     const double &sigc2,
+                     const int &ndiscard,
+                     const int &nskip,
+                     const int &nkeep,
+                     const bool verbose)
 {
     using namespace arma;
     using namespace Rcpp;
@@ -54,7 +53,7 @@ Rcpp::List mvboxcoxar_amh(const arma::mat &yobs,
     Sig *= 5.0;
     
     mat w(arma::size(yobs), fill::zeros); // K * T matrix
-    bool miss_flag = arma::any(arma::any(miss));
+    // bool miss_flag = arma::any(arma::any(miss));
     for (int t = 0; t < T; ++t) {
         for (int k = 0; k < K; ++k) {
             if (miss(k,t)) {
@@ -160,7 +159,7 @@ Rcpp::List mvboxcoxar_amh(const arma::mat &yobs,
                     double cij_prop = ::norm_rand() * std::exp(C_tunings(k,j)) + cij;
 
                     // log-likelihood difference
-                    double ll_diff = loglik_C_prop(cij, k, j, C, A, yobs, ystar, xobs, Bx, Siginv, a, sigc2) - loglik_orig - R::dnorm4(cij, 0.0, std::sqrt(sigc2), 1);
+                    double ll_diff = loglik_C_prop(cij_prop, k, j, C, A, yobs, ystar, xobs, Bx, Siginv, a, sigc2) - loglik_orig - R::dnorm4(cij, 0.0, std::sqrt(sigc2), 1);
                     if (std::log(::unif_rand()) < ll_diff) {
                         C(k,j) = cij_prop;
                         lam.row(k) = C.row(k) * xobs.t(); // only kth row affected by the update
@@ -298,7 +297,7 @@ Rcpp::List mvboxcoxar_amh(const arma::mat &yobs,
                         double cij_prop = ::norm_rand() * std::exp(C_tunings(k,j)) + cij;
 
                         // log-likelihood difference
-                        double ll_diff = loglik_C_prop(cij, k, j, C, A, yobs, ystar, xobs, Bx, Siginv, a, sigb2) - loglik_orig - R::dnorm4(cij, 0.0, std::sqrt(sigb2), 1);
+                        double ll_diff = loglik_C_prop(cij_prop, k, j, C, A, yobs, ystar, xobs, Bx, Siginv, a, sigb2) - loglik_orig - R::dnorm4(cij, 0.0, std::sqrt(sigb2), 1);
                         if (std::log(::unif_rand()) < ll_diff) {
                             C(k,j) = cij_prop;
                             lam.row(k) = C.row(k) * xobs.t(); // only kth row affected by the update

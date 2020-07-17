@@ -7,7 +7,7 @@
 hpd(object, prob)
 }
 \arguments{
-\item{object}{the output model from fitting a model}
+\item{object}{the output model from fitting a meta analysis/regression model}
 
 \item{prob}{the probability which the HPD interval will cover}
 }

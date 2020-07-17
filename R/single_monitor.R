@@ -17,8 +17,7 @@
 #' @return either 0 or 1 that indicates whether the null hypothesis has been rejected or not
 #' @export
 single_monitor <- function(y_surveill, yh_bar, sigma, nyears, sig_level, C, B1, B2, B3, verbose=FALSE) {
-	fout <- .Call(`singleMonitor`,
-		  PACKAGE="TSEnergy",
+	fout <- .Call(`_TSEnergy_singleMonitor`,
 		  as.vector(y_surveill),
 		  as.vector(yh_bar),
 		  as.numeric(sigma),

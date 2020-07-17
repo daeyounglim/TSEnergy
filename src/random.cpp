@@ -332,22 +332,23 @@ double gigrnd(const double& lambda, const double& chi, const double& psi) {
   }
 
   else {
-    double lambda_old = lambda;
-    if (lambda < 0.) {lambda = -lambda;}
+    double lam = lambda;
+    double lambda_old = lam;
+    if (lam < 0.) {lam = -lam;}
     alpha = sqrt(chi/psi);
     omega = sqrt(psi*chi);
 
     do {
-      if (lambda > 2. || omega > 3.) {
-        return _rgig_ROU_shift_alt(lambda, lambda_old, omega, alpha);
+      if (lam > 2. || omega > 3.) {
+        return _rgig_ROU_shift_alt(lam, lambda_old, omega, alpha);
       }
 
-      if (lambda >= 1.-2.25*omega*omega || omega > 0.2) {
-        return _rgig_ROU_noshift(lambda, lambda_old, omega, alpha);
+      if (lam >= 1.-2.25*omega*omega || omega > 0.2) {
+        return _rgig_ROU_noshift(lam, lambda_old, omega, alpha);
       }
 
-      if (lambda >= 0. && omega > 0.) {
-        return _rgig_newapproach1(lambda, lambda_old, omega, alpha);
+      if (lam >= 0. && omega > 0.) {
+        return _rgig_newapproach1(lam, lambda_old, omega, alpha);
       }
       throw Rcpp::exception("parameters must satisfy lambda>=0 and omega>0.");
       
